@@ -4,10 +4,10 @@ var ejs = require('ejs')
 const path = require('path')
 var mysql = require('mysql2');
 
-//192.168.1.93
+
 // Define the database connection pool
 const db = mysql.createPool({
-    host: '192.168.1.93',
+    host: 'localhost',
     user: 'berties_books_app',
     password: 'qwertyuiop',
     database: 'berties_books',
