@@ -2,6 +2,30 @@
 var express = require ('express')
 var ejs = require('ejs')
 const path = require('path')
+var mysql = require('mysql2');
+
+//192.168.1.93
+// Define the database connection pool
+const db = mysql.createPool({
+    host: '192.168.1.93',
+    user: 'berties_books_app',
+    password: 'qwertyuiop',
+    database: 'berties_books',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+});
+global.db = db;
+
+// Test the database connection
+db.getConnection((err, connection) => {
+    if (err) {
+        console.error('Database connection failed:', err);
+    } else {
+        console.log('Database connected successfully!');
+        connection.release();
+    }
+});
 
 // Create the express application object
 const app = express()
