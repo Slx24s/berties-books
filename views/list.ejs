@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Book List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fb;
+            color: #222;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f4f7b;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            min-width: 60%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        th,
+        td {
+            padding: 10px 14px;
+            border: 1px solid #8bb4e0;
+        }
+
+        th {
+            background-color: #1f4f7b;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e8f1fb;
+        }
+
+        tr:hover {
+            background-color: #cfe0fb;
+        }
+
+        p {
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Available Books</h1>
+
+    <% if (availableBooks && availableBooks.length) { %>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% availableBooks.forEach(function(book) { %>
+                    <tr>
+                        <td><%= book.title || book.name %></td>
+                        <td><%= book.price %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No books found.</p>
+    <% } %>
+</body>
+</html>

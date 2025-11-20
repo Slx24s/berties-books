@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fb;
+            color: #222;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f4f7b;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 20px 24px;
+            background-color: #ffffff;
+            border: 1px solid #8bb4e0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #1f4f7b;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            border: 1px solid #8bb4e0;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #1f4f7b;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #163a59;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add a New Book</h1>
+
+    <div class="form-container">
+        <form action="/books/bookadded" method="post">
+            <label for="name">Book Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="price">Price</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" required>
+
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+</body>
+</html>
