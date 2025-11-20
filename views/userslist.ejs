@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f7fb; color: #222; }
+        h1 { text-align: center; color: #1f4f7b; }
+        table { margin: 20px auto; border-collapse: collapse; min-width: 70%; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+        th, td { padding: 10px 14px; border: 1px solid #8bb4e0; }
+        th { background-color: #1f4f7b; color: #fff; text-align: left; }
+        tr:nth-child(even) { background-color: #e8f1fb; }
+        tr:hover { background-color: #cfe0fb; }
+        p { text-align: center; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>Registered Users</h1>
+
+    <% if (users && users.length) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(function(u) { %>
+                    <tr>
+                        <td><%= u.username %></td>
+                        <td><%= u.first %></td>
+                        <td><%= u.last %></td>
+                        <td><%= u.email %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No users found.</p>
+    <% } %>
+</body>
+</html>
