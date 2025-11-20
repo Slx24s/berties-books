@@ -3,18 +3,21 @@ var express = require ('express')
 var ejs = require('ejs')
 const path = require('path')
 var mysql = require('mysql2');
+require('dotenv').config()
 
 
 // Define the database connection pool
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'berties_books_app',
-    password: 'qwertyuiop',
-    database: 'berties_books',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'berties_books_app',
+    password: process.env.DB_PASSWORD || 'qwertyuiop',
+    database: process.env.DB_NAME || 'berties_books',
+    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 });
+
 global.db = db;
 
 // Test the database connection

@@ -67,6 +67,8 @@ router.post('/loggedin', function (req, res, next) {
             return next(err)
         }
         if (!rows || rows.length === 0) {
+            const insertAudit = "INSERT INTO audit_log (username, status, details) VALUES (?,?,?)"
+            ensureAuditTable(() => db.query(insertAudit, [username, 'FAIL', 'user not found'], () => {}))
             return res.send('Login failed: user not found')
         }
         const hashedPassword = rows[0].hashedPassword
@@ -75,10 +77,44 @@ router.post('/loggedin', function (req, res, next) {
                 return next(err)
             }
             if (result === true) {
+                const insertAudit = "INSERT INTO audit_log (username, status, details) VALUES (?,?,?)"
+                ensureAuditTable(() => db.query(insertAudit, [username, 'SUCCESS', 'password matched'], () => {}))
                 res.send('Login successful for user: ' + username)
             } else {
+                const insertAudit = "INSERT INTO audit_log (username, status, details) VALUES (?,?,?)"
+                ensureAuditTable(() => db.query(insertAudit, [username, 'FAIL', 'incorrect password'], () => {}))
                 res.send('Login failed: incorrect password')
             }
+        })
+    })
+})
+
+// Ensure audit_log table exists
+function ensureAuditTable(callback) {
+    const createAudit = `CREATE TABLE IF NOT EXISTS audit_log (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50),
+        status VARCHAR(20),
+        details VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`
+    db.query(createAudit, (err) => {
+        if (err) {
+            // do not block login flow; just log error
+            console.error('Audit table error:', err)
+        }
+        if (typeof callback === 'function') callback()
+    })
+}
+
+// Show audit history
+router.get('/audit', function (req, res, next) {
+    ensureAuditTable(() => {
+        db.query('SELECT username, status, details, created_at FROM audit_log ORDER BY created_at DESC', (err, rows) => {
+            if (err) {
+                return next(err)
+            }
+            res.render('audit.ejs', { logs: rows })
         })
     })
 })
