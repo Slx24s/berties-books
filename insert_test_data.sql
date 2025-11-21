@@ -16,5 +16,5 @@ CREATE TABLE IF NOT EXISTS users (
 # Insert default 'gold' user with password 'smiths'
 # Hash generated with bcrypt saltRounds=10 for password 'smiths'
 INSERT INTO users (username, first, last, email, hashedPassword) 
-VALUES ('gold', 'Gold', 'User', 'gold@example.com', '$2b$10$8vny8xRjJqh3xqXBXxKoXO7dZ4qK8Zr5rGqU5yJ5Zr5rGqU5yJ5Zr')
+VALUES ('gold', 'Gold', 'User', 'gold@example.com', '$2b$10$mDZBhe29EVDiVspuEQKYcuUqhD16kapigRuDg5gavUjNL9W.81MqW')
 ON DUPLICATE KEY UPDATE username=username;
