@@ -13,7 +13,7 @@ const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'berties_books_app',
     password: process.env.DB_PASSWORD || 'qwertyuiop',
-    database: process.env.DB_NAME || 'berties_books',
+    database: process.env.DB_DATABASE || 'berties_books',
     port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
     waitForConnections: true,
     connectionLimit: 10,

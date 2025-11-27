@@ -40,7 +40,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_USER=berties_books_app
 DB_PASSWORD=qwertyuiop
-DB_NAME=berties_books
+DB_DATABASE=berties_books
 ```
 
 Changes made:
