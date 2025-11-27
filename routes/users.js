@@ -1,6 +1,7 @@
 // Create a new router
 const express = require("express")
 const bcrypt = require('bcrypt')
+const { check, validationResult } = require('express-validator');
 const router = express.Router()
 const saltRounds = 10
 
@@ -16,12 +17,20 @@ router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 })
 
-router.post('/registered', function (req, res, next) {
-    // saving data in database
-    const plainPassword = req.body.password
-    const { username, first, last, email } = req.body
+router.post('/registered',
+[check('email').isEmail(),
+ check('username').isLength({min:5, max:20})],
+function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.render('./register')
+    }
+    else {
+        // saving data in database
+        const plainPassword = req.body.password
+        const { username, first, last, email } = req.body
 
-    bcrypt.hash(plainPassword, saltRounds, function(err, hashedPassword) {
+        bcrypt.hash(plainPassword, saltRounds, function(err, hashedPassword) {
         if (err) {
             return next(err)
         }
@@ -50,7 +59,8 @@ router.post('/registered', function (req, res, next) {
                 res.send(message)
             })
         })
-    })
+        })
+    }
 }); 
 
 router.get('/list', redirectLogin, function (req, res, next) {
