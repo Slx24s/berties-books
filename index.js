@@ -3,6 +3,7 @@ var express = require ('express')
 var ejs = require('ejs')
 const path = require('path')
 var mysql = require('mysql2');
+var session = require ('express-session')
 require('dotenv').config()
 
 
@@ -42,6 +43,16 @@ app.use(express.urlencoded({ extended: true }))
 
 // Set up public folder (for css and static js)
 app.use(express.static(path.join(__dirname, 'public')))
+
+// Create a session
+app.use(session({
+   secret:'somerandomstuff',
+   resave:false,
+   saveUninitialized:false,
+   cookie:{
+       expires:600000
+   }
+}))
 
 // Define our application-specific data
 app.locals.shopData = {shopName: "Bertie's Books"}

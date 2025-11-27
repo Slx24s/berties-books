@@ -84,3 +84,42 @@ How to view:
 
 1. Attempt logins via `/users/login`.
 2. Visit `/users/audit` to see the audit list.
+
+## Access Control & Authentication
+
+Session-based authentication has been implemented using `express-session`. Users must log in to access certain protected routes.
+
+### Protected Routes (Require Login):
+
+- **`/books/list`** - View all books in the shop
+- **`/users/list`** - View all registered users
+- **`/logout`** - Logout (must be logged in to logout)
+
+### Public Routes (No Login Required):
+
+- **`/`** - Home page
+- **`/about`** - About page
+- **`/users/register`** - User registration
+- **`/users/login`** - Login page
+- **`/books/search`** - Search for books
+- **`/books/addbook`** - Add a new book
+
+### How It Works:
+
+1. **Session Creation**: When a user successfully logs in via `/users/loggedin`, their username is saved in `req.session.userId`.
+
+2. **Middleware Protection**: The `redirectLogin` middleware checks if `req.session.userId` exists:
+   - If **not set**: Redirects to the login page
+   - If **set**: Allows access to the protected route
+
+3. **Session Expiration**: Sessions expire after 10 minutes (600,000ms) or when the browser is closed.
+
+4. **Logout**: The `/logout` route destroys the session, requiring the user to log in again.
+
+### Testing:
+
+1. Try accessing `/books/list` without logging in → Should redirect to login
+2. Log in with valid credentials
+3. Access `/books/list` again → Should now display the book list
+4. Click logout → Session destroyed
+5. Try accessing `/books/list` again → Should redirect to login

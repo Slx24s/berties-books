@@ -4,6 +4,14 @@ const bcrypt = require('bcrypt')
 const router = express.Router()
 const saltRounds = 10
 
+const redirectLogin = (req, res, next) => {
+   if(!req.session.userId ) {
+     res.redirect('./login') // redirect to the login page
+   } else {
+       next (); // move to the next middleware function
+   }
+}
+
 router.get('/register', function (req, res, next) {
     res.render('register.ejs')
 })
@@ -45,7 +53,7 @@ router.post('/registered', function (req, res, next) {
     })
 }); 
 
-router.get('/list', function (req, res, next) {
+router.get('/list', redirectLogin, function (req, res, next) {
     const sql = 'SELECT username, first, last, email FROM users'
     db.query(sql, (err, result) => {
         if (err) {
@@ -77,6 +85,8 @@ router.post('/loggedin', function (req, res, next) {
                 return next(err)
             }
             if (result === true) {
+                // Save user session here, when login is successful
+                req.session.userId = req.body.username;
                 const insertAudit = "INSERT INTO audit_log (username, status, details) VALUES (?,?,?)"
                 ensureAuditTable(() => db.query(insertAudit, [username, 'SUCCESS', 'password matched'], () => {}))
                 res.send('Login successful for user: ' + username)
