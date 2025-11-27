@@ -192,3 +192,77 @@ Validation is only necessary where user input is processed and stored/queried in
 2. **Type Validation**: `isEmail()`, `isFloat()`, `isLength()` ensure correct data types
 3. **Required Fields**: `notEmpty()` prevents null/empty submissions
 4. **Error Handling**: Invalid inputs redirect back to the form for correction
+
+## Input Sanitization (XSS Protection)
+
+Server-side input sanitization has been implemented using `express-sanitizer` to protect against Cross-Site Scripting (XSS) attacks.
+
+### How express-sanitizer Works:
+
+The `req.sanitize()` function removes potentially dangerous HTML tags and JavaScript code from user input. It:
+- Strips `<script>` tags and their contents
+- Removes event handlers like `onclick`, `onerror`, etc.
+- Eliminates dangerous HTML elements like `<iframe>`, `<object>`, etc.
+- Preserves safe text content while removing malicious code
+
+### User Registration (`/users/registered`):
+
+**Fields Sanitized:**
+- **Username**: `req.sanitize(req.body.username)` - Prevents XSS in usernames
+- **First Name**: `req.sanitize(req.body.first)` - Removes malicious scripts from names
+- **Last Name**: `req.sanitize(req.body.last)` - Removes malicious scripts from names
+
+**Fields NOT Sanitized:**
+- **Email**: NOT sanitized - Email validation already ensures proper format; sanitization could break valid email addresses
+- **Password**: NOT sanitized - Passwords are hashed with bcrypt, so any characters (including special ones) are safe; sanitization would alter the user's intended password
+
+**Reasoning**: 
+- Names and usernames are displayed on pages, so they need XSS protection
+- Email is validated for format and not displayed as HTML
+- Passwords are never displayed and are hashed, making sanitization unnecessary and potentially harmful
+
+### User Login (`/users/loggedin`):
+
+**No sanitization applied** - Login credentials are validated but not sanitized because:
+- Username is used for database lookup only
+- Password is compared with hashed value only
+- Neither is displayed or rendered in HTML
+
+### Book Addition (`/books/bookadded`):
+
+**Fields Sanitized:**
+- **Book Name**: `req.sanitize(req.body.name)` - Book names are displayed on multiple pages, need XSS protection
+
+**Fields NOT Sanitized:**
+- **Price**: NOT sanitized - Validated as a float number; numeric values don't pose XSS risks
+
+**Reasoning**: Text fields displayed to users need sanitization; numeric fields validated by type don't.
+
+### Book Search (`/books/search-result`):
+
+**Fields Sanitized:**
+- **Search Keyword**: `req.sanitize(req.query.keyword)` - Search terms are displayed on results page, need XSS protection
+
+**Reasoning**: Search keywords are echoed back to the user on the results page, making them a potential XSS vector.
+
+### Summary of Sanitization Strategy:
+
+**Sanitize when:**
+1. User input will be displayed/rendered in HTML pages
+2. Input contains free-form text (names, descriptions, search terms)
+3. Data could potentially contain HTML or JavaScript
+
+**Do NOT sanitize when:**
+1. Input is validated as a specific type (email, number, date)
+2. Input is hashed or encrypted (passwords)
+3. Input is only used for database lookups and never displayed
+4. Sanitization would break the intended functionality
+
+### Testing XSS Protection:
+
+Try registering with malicious input:
+- **First Name**: `<script>alert('XSS')</script>` → Should be sanitized to safe text
+- **Username**: `<img src=x onerror=alert('XSS')>` → Should be sanitized
+- **Book Name**: `<iframe src="evil.com"></iframe>` → Should be sanitized
+
+After sanitization, these inputs will be stored as plain text without the dangerous HTML/JavaScript, protecting your application from XSS attacks.

@@ -31,7 +31,10 @@ function (req, res, next) {
     else {
         // saving data in database
         const plainPassword = req.body.password
-        const { username, first, last, email } = req.body
+        const username = req.sanitize(req.body.username)
+        const first = req.sanitize(req.body.first)
+        const last = req.sanitize(req.body.last)
+        const email = req.body.email
 
         bcrypt.hash(plainPassword, saltRounds, function(err, hashedPassword) {
         if (err) {

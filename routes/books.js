@@ -22,7 +22,7 @@ function (req, res, next) {
     if (!errors.isEmpty()) {
         return res.redirect('./search')
     }
-    let keyword = req.query.keyword
+    let keyword = req.sanitize(req.query.keyword)
     let sqlquery = "SELECT * FROM books WHERE name LIKE ?"
     let searchPattern = '%' + keyword + '%'
     db.query(sqlquery, [searchPattern], (err, result) => {
@@ -57,15 +57,17 @@ function(req,res,next) {
         return res.redirect('./addbook')
     }
     // saving data in database
+    const bookName = req.sanitize(req.body.name)
+    const bookPrice = req.body.price
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)"
     // execute sql query
-    let newrecord = [req.body.name, req.body.price]
+    let newrecord = [bookName, bookPrice]
     db.query(sqlquery, newrecord, (err, result) => {
         if (err) {
             next(err)
         }
         else
-            res.send(' This book is added to database, name: ' + req.body.name + ' price ' + req.body.price)
+            res.send(' This book is added to database, name: ' + bookName + ' price ' + bookPrice)
     })
 })
 
