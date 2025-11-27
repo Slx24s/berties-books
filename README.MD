@@ -123,3 +123,72 @@ Session-based authentication has been implemented using `express-session`. Users
 3. Access `/books/list` again → Should now display the book list
 4. Click logout → Session destroyed
 5. Try accessing `/books/list` again → Should redirect to login
+
+## Input Validation
+
+Server-side input validation has been implemented using `express-validator` to ensure data integrity and security.
+
+### User Registration (`/users/registered`):
+
+**Validations Applied:**
+- **Email**: Must be a valid email format (e.g., `user@example.com`)
+- **Username**: Must be 5-20 characters long
+- **Password**: Must be at least 8 characters long
+- **First Name**: Required field, trimmed and sanitized (XSS protection)
+- **Last Name**: Required field, trimmed and sanitized (XSS protection)
+
+**Reasoning**: Registration requires strict validation to ensure:
+- Valid contact information (email)
+- Secure passwords (minimum 8 characters)
+- Proper username length for database constraints
+- Protection against XSS attacks through sanitization
+
+### User Login (`/users/loggedin`):
+
+**Validations Applied:**
+- **Username**: Cannot be empty
+- **Password**: Cannot be empty
+
+**Reasoning**: Basic validation to prevent empty submissions and ensure both credentials are provided before database lookup.
+
+### Book Addition (`/books/bookadded`):
+
+**Validations Applied:**
+- **Book Name**: Required field, trimmed and sanitized
+- **Price**: Must be a positive decimal number (minimum 0.01)
+
+**Reasoning**: Ensures:
+- Books have valid names
+- Prices are realistic positive values
+- Protection against XSS attacks in book names
+
+### Book Search (`/books/search-result`):
+
+**Validations Applied:**
+- **Keyword**: Cannot be empty, trimmed and sanitized
+
+**Reasoning**: Prevents empty searches and protects against XSS attacks in search terms.
+
+### Routes Without Validation:
+
+**Routes with NO validation:**
+- `/books/list` - No user input, just displays data
+- `/users/list` - No user input, just displays data
+- `/users/audit` - No user input, just displays data
+- `/books/bargainbooks` - No user input, hardcoded query
+- `/logout` - No user input, just destroys session
+- All GET routes for rendering forms (register, login, search, addbook)
+
+**Reasoning**: These routes either:
+1. Display data without accepting user input
+2. Are simple GET requests that render forms
+3. Perform actions without user-submitted data
+
+Validation is only necessary where user input is processed and stored/queried in the database.
+
+### Security Features:
+
+1. **XSS Protection**: `trim()` and `escape()` sanitize inputs to prevent cross-site scripting
+2. **Type Validation**: `isEmail()`, `isFloat()`, `isLength()` ensure correct data types
+3. **Required Fields**: `notEmpty()` prevents null/empty submissions
+4. **Error Handling**: Invalid inputs redirect back to the form for correction

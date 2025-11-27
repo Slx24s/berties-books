@@ -18,8 +18,11 @@ router.get('/register', function (req, res, next) {
 })
 
 router.post('/registered',
-[check('email').isEmail(),
- check('username').isLength({min:5, max:20})],
+[check('email').isEmail().withMessage('Invalid email format'),
+ check('username').isLength({min:5, max:20}).withMessage('Username must be 5-20 characters'),
+ check('password').isLength({min:8}).withMessage('Password must be at least 8 characters'),
+ check('first').notEmpty().withMessage('First name is required').trim().escape(),
+ check('last').notEmpty().withMessage('Last name is required').trim().escape()],
 function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -77,7 +80,14 @@ router.get('/login', function (req, res, next) {
     res.render('login.ejs')
 })
 
-router.post('/loggedin', function (req, res, next) {
+router.post('/loggedin',
+[check('username').notEmpty().withMessage('Username is required'),
+ check('password').notEmpty().withMessage('Password is required')],
+function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.redirect('./login')
+    }
     const { username, password } = req.body
     const sql = 'SELECT hashedPassword FROM users WHERE username = ? LIMIT 1'
     db.query(sql, [username], (err, rows) => {

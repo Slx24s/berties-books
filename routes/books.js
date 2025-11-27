@@ -1,5 +1,6 @@
 // Create a new router
 const express = require("express")
+const { check, validationResult } = require('express-validator');
 const router = express.Router()
 
 const redirectLogin = (req, res, next) => {
@@ -14,7 +15,13 @@ router.get('/search',function(req, res, next){
     res.render("search.ejs")
 });
 
-router.get('/search-result', function (req, res, next) {
+router.get('/search-result', 
+[check('keyword').notEmpty().withMessage('Search keyword cannot be empty').trim().escape()],
+function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.redirect('./search')
+    }
     let keyword = req.query.keyword
     let sqlquery = "SELECT * FROM books WHERE name LIKE ?"
     let searchPattern = '%' + keyword + '%'
@@ -41,7 +48,14 @@ router.get('/addbook', function(req, res, next) {
     res.render("addbook.ejs")
 });
 
-router.post('/bookadded',function(req,res,next) {
+router.post('/bookadded',
+[check('name').notEmpty().withMessage('Book name is required').trim().escape(),
+ check('price').isFloat({min: 0.01}).withMessage('Price must be a positive number')],
+function(req,res,next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.redirect('./addbook')
+    }
     // saving data in database
     let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)"
     // execute sql query
