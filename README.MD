@@ -266,3 +266,135 @@ Try registering with malicious input:
 - **Book Name**: `<iframe src="evil.com"></iframe>` → Should be sanitized
 
 After sanitization, these inputs will be stored as plain text without the dangerous HTML/JavaScript, protecting your application from XSS attacks.
+
+## Books API Documentation
+
+Berties Books provides a RESTful API endpoint to retrieve book information in JSON format. This allows other developers to programmatically access the book catalog.
+
+### Base Endpoint
+
+```
+GET /api/books
+```
+
+Returns all books in the database as a JSON array.
+
+**Example Request:**
+```
+http://localhost:8000/api/books
+```
+
+**Example Response:**
+```json
+[
+  {
+    "id": 1,
+    "name": "Database Systems",
+    "price": 45.99
+  },
+  {
+    "id": 2,
+    "name": "Web Development",
+    "price": 32.50
+  }
+]
+```
+
+### Query Parameters
+
+The API supports the following optional query parameters to filter and sort results:
+
+#### 1. Search by Book Name
+
+Filter books by name using a search term (case-insensitive, partial match).
+
+**Parameter:** `search`
+
+**Example:**
+```
+http://localhost:8000/api/books?search=world
+```
+
+Returns all books containing "world" in their name.
+
+#### 2. Filter by Price Range
+
+Filter books within a specific price range.
+
+**Parameters:**
+- `minprice` - Minimum price (inclusive)
+- `maxprice` - Maximum price (inclusive)
+
+**Examples:**
+```
+http://localhost:8000/api/books?minprice=5&maxprice=10
+```
+Returns books priced between £5 and £10.
+
+```
+http://localhost:8000/api/books?minprice=20
+```
+Returns books priced £20 or more.
+
+```
+http://localhost:8000/api/books?maxprice=15
+```
+Returns books priced £15 or less.
+
+#### 3. Sort Results
+
+Sort the results by name or price in ascending order.
+
+**Parameter:** `sort`
+
+**Valid Values:**
+- `name` - Sort alphabetically by book name
+- `price` - Sort numerically by price (lowest to highest)
+
+**Examples:**
+```
+http://localhost:8000/api/books?sort=name
+```
+Returns all books sorted alphabetically.
+
+```
+http://localhost:8000/api/books?sort=price
+```
+Returns all books sorted by price (cheapest first).
+
+### Combining Parameters
+
+Multiple query parameters can be combined to create complex queries.
+
+**Examples:**
+
+Search for books containing "web" priced under £50, sorted by price:
+```
+http://localhost:8000/api/books?search=web&maxprice=50&sort=price
+```
+
+Find books priced between £10-£30, sorted alphabetically:
+```
+http://localhost:8000/api/books?minprice=10&maxprice=30&sort=name
+```
+
+### Error Handling
+
+If a database error occurs, the API will return the error as a JSON object:
+
+```json
+{
+  "code": "ER_...",
+  "errno": 1234,
+  "message": "Error description"
+}
+```
+
+### Response Format
+
+All successful responses return a JSON array of book objects. Each book object contains:
+- `id` (integer) - Unique book identifier
+- `name` (string) - Book title
+- `price` (decimal) - Book price in pounds
+
+If no books match the query criteria, an empty array `[]` is returned.
