@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Weather Forecast - <%=shopData.shopName%></title>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <style>
+      .weather-container {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        color: white;
+      }
+      
+      .weather-form {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+      
+      .weather-form h2 {
+        color: #667eea;
+        margin-top: 0;
+        font-size: 24px;
+      }
+      
+      .form-group {
+        margin-bottom: 15px;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: bold;
+      }
+      
+      .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #667eea;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+      
+      .form-group input:focus {
+        outline: none;
+        border-color: #764ba2;
+      }
+      
+      .btn-submit {
+        background: #667eea;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      
+      .btn-submit:hover {
+        background: #764ba2;
+      }
+      
+      .weather-info {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 25px;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+      }
+      
+      .weather-header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      
+      .weather-header h1 {
+        font-size: 36px;
+        margin: 0 0 10px 0;
+        color: #ffffff;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+      }
+      
+      .weather-header .city-name {
+        font-size: 28px;
+        font-weight: bold;
+        color: #ffd700;
+      }
+      
+      .temp-display {
+        text-align: center;
+        font-size: 64px;
+        font-weight: bold;
+        margin: 20px 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+      
+      .weather-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      
+      .weather-item {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      
+      .weather-item-label {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-bottom: 5px;
+      }
+      
+      .weather-item-value {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      
+      .description {
+        text-align: center;
+        font-size: 20px;
+        margin: 15px 0;
+        text-transform: capitalize;
+        font-style: italic;
+      }
+      
+      .error-message {
+        background: rgba(255, 0, 0, 0.2);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 18px;
+        border: 2px solid rgba(255, 0, 0, 0.5);
+      }
+      
+      .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        transition: background 0.3s;
+      }
+      
+      .back-link:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="weather-container">
+      <div class="weather-form">
+        <h2>🌤️ Weather Forecast</h2>
+        <form action="/weather" method="GET">
+          <div class="form-group">
+            <label for="city">Enter City Name:</label>
+            <input type="text" id="city" name="city" placeholder="e.g., London, Paris, New York" required>
+          </div>
+          <button type="submit" class="btn-submit">Get Weather</button>
+        </form>
+      </div>
+      
+      <% if (weather) { %>
+        <% if (weather.error) { %>
+          <div class="error-message">
+            <strong>❌ Error:</strong> <%= weather.error %>
+          </div>
+        <% } else { %>
+          <div class="weather-info">
+            <div class="weather-header">
+              <h1>Current Weather</h1>
+              <div class="city-name"><%= weather.name %>, <%= weather.sys.country %></div>
+            </div>
+            
+            <div class="temp-display">
+              <%= Math.round(weather.main.temp) %>°C
+            </div>
+            
+            <div class="description">
+              <%= weather.weather[0].description %>
+            </div>
+            
+            <div class="weather-details">
+              <div class="weather-item">
+                <div class="weather-item-label">💧 Humidity</div>
+                <div class="weather-item-value"><%= weather.main.humidity %>%</div>
+              </div>
+              
+              <div class="weather-item">
+                <div class="weather-item-label">🌡️ Feels Like</div>
+                <div class="weather-item-value"><%= Math.round(weather.main.feels_like) %>°C</div>
+              </div>
+              
+              <div class="weather-item">
+                <div class="weather-item-label">💨 Wind Speed</div>
+                <div class="weather-item-value"><%= weather.wind.speed %> m/s</div>
+              </div>
+              
+              <div class="weather-item">
+                <div class="weather-item-label">🧭 Wind Direction</div>
+                <div class="weather-item-value"><%= weather.wind.deg %>°</div>
+              </div>
+              
+              <div class="weather-item">
+                <div class="weather-item-label">🔽 Pressure</div>
+                <div class="weather-item-value"><%= weather.main.pressure %> hPa</div>
+              </div>
+              
+              <div class="weather-item">
+                <div class="weather-item-label">👁️ Visibility</div>
+                <div class="weather-item-value"><%= (weather.visibility / 1000).toFixed(1) %> km</div>
+              </div>
+              
+              <% if (weather.clouds) { %>
+              <div class="weather-item">
+                <div class="weather-item-label">☁️ Cloudiness</div>
+                <div class="weather-item-value"><%= weather.clouds.all %>%</div>
+              </div>
+              <% } %>
+              
+              <% if (weather.main.temp_min && weather.main.temp_max) { %>
+              <div class="weather-item">
+                <div class="weather-item-label">🌡️ Min / Max</div>
+                <div class="weather-item-value"><%= Math.round(weather.main.temp_min) %>° / <%= Math.round(weather.main.temp_max) %>°</div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+      
+      <a href="/" class="back-link">← Back to Home</a>
+    </div>
+  </body>
+</html>
